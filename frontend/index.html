@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trendora — Men's Fashion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- ── NAVBAR ──────────────────────────────────────── -->
+<nav class="navbar" id="navbar">
+  <button class="hamburger" onclick="toggleMobileMenu()">☰</button>
+  <div class="nav-logo" onclick="goTo('home')">TRENDORA</div>
+  <div class="nav-center" id="nav-center">
+    <span onclick="goTo('home');filterCat('All')">Shop</span>
+    <span onclick="goTo('home');filterCat('Shirts')">Shirts</span>
+    <span onclick="goTo('home');filterCat('Jackets')">Jackets</span>
+    <span onclick="goTo('home');filterCat('Suits')">Suits</span>
+    <span onclick="goTo('home');filterCat('Shoes')">Shoes</span>
+  </div>
+  <div class="nav-right">
+    <span id="nav-username" style="display:none"></span>
+    <span id="nav-orders-link" onclick="goTo('orders')" style="display:none">Orders</span>
+    <span id="nav-admin-link" onclick="goTo('admin')" style="display:none">Admin</span>
+    <span id="nav-login-link" onclick="goTo('auth')">Login</span>
+    <span id="nav-logout-link" onclick="doLogout()" style="display:none">Logout</span>
+    <span class="cart-btn" onclick="goTo('cart')">
+      Bag&nbsp;<span id="cart-count" class="cbadge">0</span>
+    </span>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: HOME
+════════════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Men's Collection · SS 2026</p>
+      <h1 class="hero-headline">Refined<br><em>Style for</em><br>Every Man.</h1>
+      <p class="hero-body">Premium menswear crafted for the modern gentleman. Discover timeless pieces that define your character.</p>
+      <button class="btn-primary" onclick="document.getElementById('shop-anchor').scrollIntoView({behavior:'smooth'})">
+        Explore Collection →
+      </button>
+    </div>
+    <div class="hero-right">
+      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=85" alt="Men's Fashion"/>
+      <div class="hero-tag-badge">NEW ARRIVALS</div>
+    </div>
+  </section>
+
+  <!-- CATEGORY STRIP -->
+  <div id="shop-anchor"></div>
+  <div class="cat-strip" id="cat-strip">
+    <button class="cat-btn active" onclick="filterCat('All',this)">All</button>
+    <button class="cat-btn" onclick="filterCat('Shirts',this)">Shirts</button>
+    <button class="cat-btn" onclick="filterCat('Pants',this)">Pants</button>
+    <button class="cat-btn" onclick="filterCat('Jackets',this)">Jackets</button>
+    <button class="cat-btn" onclick="filterCat('Suits',this)">Suits</button>
+    <button class="cat-btn" onclick="filterCat('Accessories',this)">Accessories</button>
+    <button class="cat-btn" onclick="filterCat('Shoes',this)">Shoes</button>
+  </div>
+
+  <!-- PRODUCTS GRID -->
+  <div class="products-grid" id="products-grid">
+    <div class="grid-loader">Loading collection...</div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: PRODUCT DETAIL
+════════════════════════════════════════════════════ -->
+<div class="page" id="page-detail">
+  <div class="detail-wrap">
+    <button class="back-link" onclick="goTo('home')">← Back to Shop</button>
+    <div class="detail-layout">
+      <div class="detail-img-col">
+        <img id="det-img" src="" alt=""/>
+        <span id="det-badge" class="det-badge"></span>
+      </div>
+      <div class="detail-info-col">
+        <p class="det-cat" id="det-cat"></p>
+        <h1 class="det-name" id="det-name"></h1>
+        <p class="det-price" id="det-price"></p>
+        <p class="size-lbl">Choose Size</p>
+        <div class="size-grid" id="size-grid"></div>
+        <button class="btn-primary w100" onclick="addDetailToCart()">Add to Bag</button>
+        <button class="btn-ghost w100" onclick="goTo('home')">Continue Shopping</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: CART
+════════════════════════════════════════════════════ -->
+<div class="page" id="page-cart">
+  <div class="inner-wrap">
+    <h1 class="page-h1">Shopping Bag</h1>
+    <div id="cart-body"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: CHECKOUT
+════════════════════════════════════════════════════ -->
+<div class="page" id="page-checkout">
+  <div class="inner-wrap narrow">
+    <h1 class="page-h1">Checkout</h1>
+    <div class="checkout-layout">
+      <div>
+        <div class="field"><label>Full Name</label><input id="co-name" type="text" placeholder="Your full name"/></div>
+        <div class="field"><label>Email</label><input id="co-email" type="email" placeholder="you@email.com"/></div>
+        <div class="field"><label>Shipping Address</label><input id="co-addr" type="text" placeholder="Street, City, Country"/></div>
+        <div class="field">
+          <label>Payment Method</label>
+          <select id="co-pay">
+            <option value="card">💳 Credit / Debit Card</option>
+            <option value="cash">💵 Cash on Delivery</option>
+            <option value="transfer">🏦 Bank Transfer</option>
+          </select>
+        </div>
+        <p class="err-msg" id="co-err"></p>
+        <button class="btn-primary w100" onclick="submitOrder()">Place Order →</button>
+      </div>
+      <div class="co-summary" id="co-summary"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: ORDER SUCCESS
+════════════════════════════════════════════════════ -->
+<div class="page" id="page-success">
+  <div class="success-box">
+    <div class="success-check">✓</div>
+    <h2>Order Confirmed!</h2>
+    <p id="success-detail"></p>
+    <button class="btn-primary" onclick="goTo('home')">Continue Shopping</button>
+    <button class="btn-ghost" onclick="goTo('orders')" style="margin-left:.8rem">View My Orders</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: AUTH (Login / Register)
+════════════════════════════════════════════════════ -->
+<div class="page" id="page-auth">
+  <div class="inner-wrap narrow">
+    <h1 class="page-h1" id="auth-h1">Welcome Back</h1>
+    <p class="page-sub" id="auth-sub">Login to your Trendora account.</p>
+
+    <div class="field" id="reg-name-row" style="display:none">
+      <label>Full Name</label><input id="a-name" type="text" placeholder="Your name"/>
+    </div>
+    <div class="field"><label>Email</label><input id="a-email" type="email" placeholder="you@email.com"/></div>
+    <div class="field"><label>Password</label><input id="a-pass" type="password" placeholder="••••••••"/></div>
+    <p class="err-msg" id="auth-err"></p>
+    <button class="btn-primary w100" id="auth-submit-btn" onclick="submitAuth()">Login →</button>
+
+    <p class="form-toggle">
+      <span id="toggle-txt">No account?</span>
+      <a href="#" id="toggle-link" onclick="swapAuthMode(event)">Register here</a>
+    </p>
+    <div class="hint-box">
+      <p>👤 Test user: ahmed@test.com / 123456</p>
+      <p>🔐 Admin: admin@trendora.com / 123456</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: MY ORDERS
+════════════════════════════════════════════════════ -->
+<div class="page" id="page-orders">
+  <div class="inner-wrap">
+    <h1 class="page-h1">My Orders</h1>
+    <div id="orders-body"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: ADMIN DASHBOARD
+════════════════════════════════════════════════════ -->
+<div class="page" id="page-admin">
+  <div class="inner-wrap">
+    <h1 class="page-h1">Admin Dashboard</h1>
+    <div class="stats-row" id="admin-stats"></div>
+    <h2 class="section-title">All Orders</h2>
+    <div id="admin-orders-tbl"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
