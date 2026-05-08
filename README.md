@@ -22,23 +22,7 @@ trendora/
 └── package.json
 ```
 
-## 🚀 Deploy on Render
 
-1. رفع المشروع على GitHub
-2. اذهب لـ render.com
-3. New → Web Service
-4. اختر الـ Repo
-5. اضبط:
-   - Build Command: `npm install`
-   - Start Command: `npm start`
-6. Deploy!
-
-## 💻 Run Locally
-```bash
-npm install
-npm start
-# http://localhost:3000
-```
 
 ## 🔑 Login Credentials
 | Type  | Email | Password |
