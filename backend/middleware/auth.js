@@ -1,12 +1,13 @@
 // ============================================================
 //  auth.js — JWT Middleware
-//  يحمي الـ Endpoints التي تحتاج تسجيل دخول
+//  Protects Endpoints that require the user to be logged in
 // ============================================================
 
 const jwt    = require('jsonwebtoken');
 const SECRET = process.env.JWT_SECRET || 'trendora_secret_key_2026';
 
-// حماية المستخدم العادي
+
+// ── Protect regular user routes ────────────────────────────
 function authMiddleware(req, res, next) {
   const header = req.headers.authorization;
   if (!header) return res.status(401).json({ error: 'No token provided' });
@@ -18,7 +19,8 @@ function authMiddleware(req, res, next) {
   }
 }
 
-// حماية الـ Admin فقط
+
+// ── Protect admin-only routes ──────────────────────────────
 function adminMiddleware(req, res, next) {
   const header = req.headers.authorization;
   if (!header) return res.status(401).json({ error: 'No token' });
@@ -31,5 +33,6 @@ function adminMiddleware(req, res, next) {
     res.status(401).json({ error: 'Invalid token' });
   }
 }
+
 
 module.exports = { authMiddleware, adminMiddleware, SECRET };
