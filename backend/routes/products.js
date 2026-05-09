@@ -1,7 +1,7 @@
 // ============================================================
 //  routes/products.js
-//  يمثل: Product.Save(), Update(), Delete()
-//        Category.addProduct(), removeProduct(), getProduct()
+//  Represents: Product.Save(), Update(), Delete()
+//              Category.addProduct(), removeProduct(), getProduct()
 // ============================================================
 
 const express = require('express');
@@ -11,9 +11,9 @@ const { adminMiddleware }      = require('../middleware/auth');
 const router = express.Router();
 
 
-// ── GET /api/products ───────────────────────────────────
-// يمثل: Category.getProduct() من الـ UML
-// يرجع كل المنتجات، مع فلترة اختيارية بالـ category
+// ── GET /api/products ────────────────────────────────────────
+// Represents: Category.getProduct() from the UML
+// Returns all products, with optional filtering by category
 router.get('/', (req, res) => {
   const { category } = req.query;
   const result = category
@@ -23,15 +23,15 @@ router.get('/', (req, res) => {
 });
 
 
-// ── GET /api/products/categories ───────────────────────
-// يرجع كل الـ Category objects
+// ── GET /api/products/categories/all ────────────────────────
+// Returns all Category objects
 router.get('/categories/all', (req, res) => {
   res.json(categories);
 });
 
 
-// ── GET /api/products/:id ───────────────────────────────
-// يرجع Product object واحد
+// ── GET /api/products/:id ────────────────────────────────────
+// Returns a single Product object by ID
 router.get('/:id', (req, res) => {
   const product = products.find(p => p.productId === parseInt(req.params.id));
   if (!product) return res.status(404).json({ error: 'Product not found' });
@@ -39,22 +39,22 @@ router.get('/:id', (req, res) => {
 });
 
 
-// ── POST /api/products ──────────────────────────────────
-// يمثل: Product.Save() + Category.addProduct() من الـ UML
-// Admin فقط
+// ── POST /api/products ───────────────────────────────────────
+// Represents: Product.Save() + Category.addProduct() from the UML
+// Admin only
 router.post('/', adminMiddleware, (req, res) => {
   const { name, price, category, image, badge } = req.body;
   if (!name || !price || !category)
     return res.status(400).json({ error: 'name, price, category required' });
 
-  // إنشاء Product Object (يطابق UML attributes)
+  // Create a new Product Object (matches UML attributes)
   const product = {
     productId: products.length + 1,  // int productId
     name,                             // String name
     price:    parseFloat(price),      // double price
     category,                         // String category
-    image:    image  || '',
-    badge:    badge  || ''
+    image:    image || '',
+    badge:    badge || ''
   };
 
   products.push(product); // Product.Save()
@@ -62,8 +62,8 @@ router.post('/', adminMiddleware, (req, res) => {
 });
 
 
-// ── PUT /api/products/:id ───────────────────────────────
-// يمثل: Product.Update() من الـ UML
+// ── PUT /api/products/:id ────────────────────────────────────
+// Represents: Product.Update() from the UML
 router.put('/:id', adminMiddleware, (req, res) => {
   const idx = products.findIndex(p => p.productId === parseInt(req.params.id));
   if (idx === -1) return res.status(404).json({ error: 'Not found' });
@@ -72,8 +72,8 @@ router.put('/:id', adminMiddleware, (req, res) => {
 });
 
 
-// ── DELETE /api/products/:id ────────────────────────────
-// يمثل: Product.Delete() + Category.removeProduct() من الـ UML
+// ── DELETE /api/products/:id ─────────────────────────────────
+// Represents: Product.Delete() + Category.removeProduct() from the UML
 router.delete('/:id', adminMiddleware, (req, res) => {
   const idx = products.findIndex(p => p.productId === parseInt(req.params.id));
   if (idx === -1) return res.status(404).json({ error: 'Not found' });
