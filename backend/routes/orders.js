@@ -1,8 +1,8 @@
 // ============================================================
 //  routes/orders.js
-//  يمثل: Order.Save(), calculateTotal(), setStatues()
-//        OrderItem (orderItemId, orderId, productId, priceOrder)
-//        Payment.save(), processPayment()
+//  Represents: Order.Save(), calculateTotal(), setStatues()
+//              OrderItem (orderItemId, orderId, productId, priceOrder)
+//              Payment.save(), processPayment()
 // ============================================================
 
 const express = require('express');
@@ -15,22 +15,22 @@ const { authMiddleware } = require('../middleware/auth');
 const router = express.Router();
 
 
-// ── POST /api/orders ────────────────────────────────────
-// يمثل: Order.Save() + Payment.processPayment() من الـ UML
+// ── POST /api/orders ────────────────────────────────────────
+// Represents: Order.Save() + Payment.processPayment() from the UML
 router.post('/', authMiddleware, (req, res) => {
   try {
     const { paymentMethod, address } = req.body;
     if (!paymentMethod || !address)
       return res.status(400).json({ error: 'paymentMethod and address required' });
 
-    // جلب سلة المستخدم
+    // Get the user's shopping cart
     const cart = carts.find(c => c.userId === req.user.userId);
     if (!cart) return res.status(400).json({ error: 'Cart is empty' });
 
     const items = cartItems.filter(i => i.cartId === cart.cartId);
     if (!items.length) return res.status(400).json({ error: 'Cart is empty' });
 
-    // ── Order.calculateTotal() ─────────────────────────
+    // ── Order.calculateTotal() ──────────────────────────────
     let totalAmount = 0;
     const itemsWithProduct = items.map(i => {
       const product = products.find(p => p.productId === i.productId);
@@ -38,17 +38,17 @@ router.post('/', authMiddleware, (req, res) => {
       return { ...i, product };
     });
 
-    // ── إنشاء Payment Object (يطابق UML attributes) ───
+    // ── Create a new Payment Object (matches UML attributes) ─
     const payment = {
       paymentId:     nextId('payment'),  // int paymentId
       paymentMethod,                     // String paymentMethod
       amount:        totalAmount,        // double amount
-      date:          new Date(),         // Data date
+      date:          new Date(),         // Date date
       status:        'Completed'         // String status
     };
     payments.push(payment); // Payment.save()
 
-    // ── إنشاء Order Object (يطابق UML attributes) ─────
+    // ── Create a new Order Object (matches UML attributes) ───
     const order = {
       orderId:     nextId('order'),    // int orderId
       date:        new Date(),         // Date date
@@ -61,7 +61,7 @@ router.post('/', authMiddleware, (req, res) => {
     };
     orders.push(order); // Order.Save()
 
-    // ── إنشاء OrderItem Objects ────────────────────────
+    // ── Create OrderItem Objects for each item in the cart ───
     itemsWithProduct.forEach(i => {
       const orderItem = {
         orderItemId: nextId('orderItem'), // int orderItemId
@@ -74,7 +74,7 @@ router.post('/', authMiddleware, (req, res) => {
       orderItems.push(orderItem); // OrderItem.Save()
     });
 
-    // ── ShoppingCart.clearCart() بعد الطلب ────────────
+    // ── ShoppingCart.clearCart() after placing the order ─────
     const toRemove = cartItems
       .reduce((acc, item, i) => { if (item.cartId === cart.cartId) acc.push(i); return acc; }, []);
     toRemove.reverse().forEach(i => cartItems.splice(i, 1));
@@ -98,8 +98,8 @@ router.post('/', authMiddleware, (req, res) => {
 });
 
 
-// ── GET /api/orders ─────────────────────────────────────
-// جلب كل طلبات المستخدم
+// ── GET /api/orders ──────────────────────────────────────────
+// Get all orders for the logged-in user
 router.get('/', authMiddleware, (req, res) => {
   const userOrders = orders
     .filter(o => o.userId === req.user.userId)
@@ -113,7 +113,8 @@ router.get('/', authMiddleware, (req, res) => {
 });
 
 
-// ── GET /api/orders/:id ─────────────────────────────────
+// ── GET /api/orders/:id ──────────────────────────────────────
+// Get a single Order object by ID
 router.get('/:id', authMiddleware, (req, res) => {
   const order = orders.find(o => o.orderId === parseInt(req.params.id) && o.userId === req.user.userId);
   if (!order) return res.status(404).json({ error: 'Order not found' });
@@ -124,8 +125,8 @@ router.get('/:id', authMiddleware, (req, res) => {
 });
 
 
-// ── PUT /api/orders/:id/status ──────────────────────────
-// يمثل: Order.setStatues(String status) من الـ UML
+// ── PUT /api/orders/:id/status ───────────────────────────────
+// Represents: Order.setStatues(String status) from the UML
 router.put('/:id/status', authMiddleware, (req, res) => {
   const order = orders.find(o => o.orderId === parseInt(req.params.id));
   if (!order) return res.status(404).json({ error: 'Not found' });
