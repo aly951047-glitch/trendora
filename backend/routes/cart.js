@@ -1,8 +1,8 @@
 // ============================================================
 //  routes/cart.js
-//  يمثل: ShoppingCart.addProduct(), removeProduct(),
-//        updateProduct(), clearCart()
-//        CartItem (cartItemId, cartId, productId)
+//  Represents: ShoppingCart.addProduct(), removeProduct(),
+//              updateProduct(), clearCart()
+//              CartItem (cartItemId, cartId, productId)
 // ============================================================
 
 const express = require('express');
@@ -12,12 +12,12 @@ const { authMiddleware } = require('../middleware/auth');
 const router = express.Router();
 
 
-// ── Helper: جلب أو إنشاء ShoppingCart object للمستخدم ──
-// يمثل: ShoppingCart constructor من الـ UML
+// ── Helper: Get or create a ShoppingCart object for the user
+// Represents: ShoppingCart constructor from the UML
 function getOrCreateCart(userId) {
   let cart = carts.find(c => c.userId === userId);
   if (!cart) {
-    // إنشاء ShoppingCart Object جديد
+    // Create a new ShoppingCart Object
     cart = {
       cartId: nextId('cart'),  // int cartId
       userId                   // int userId
@@ -28,7 +28,7 @@ function getOrCreateCart(userId) {
 }
 
 
-// ── Helper: بناء response مع تفاصيل المنتجات ───────────
+// ── Helper: Build response with full product details ────────
 function buildCartResponse(cart) {
   const items = cartItems
     .filter(i => i.cartId === cart.cartId)
@@ -41,16 +41,16 @@ function buildCartResponse(cart) {
 }
 
 
-// ── GET /api/cart ───────────────────────────────────────
-// يجلب ShoppingCart الخاص بالمستخدم
+// ── GET /api/cart ───────────────────────────────────────────
+// Get the ShoppingCart for the logged-in user
 router.get('/', authMiddleware, (req, res) => {
   const cart = getOrCreateCart(req.user.userId);
   res.json(buildCartResponse(cart));
 });
 
 
-// ── POST /api/cart ──────────────────────────────────────
-// يمثل: ShoppingCart.addProduct(int productId) من الـ UML
+// ── POST /api/cart ──────────────────────────────────────────
+// Represents: ShoppingCart.addProduct(int productId) from the UML
 router.post('/', authMiddleware, (req, res) => {
   const { productId, size, quantity = 1 } = req.body;
   if (!productId || !size)
@@ -61,7 +61,7 @@ router.post('/', authMiddleware, (req, res) => {
 
   const cart = getOrCreateCart(req.user.userId);
 
-  // البحث إذا CartItem موجود مسبقاً بنفس المنتج والمقاس
+  // Check if a CartItem already exists with the same product and size
   const existing = cartItems.find(
     i => i.cartId === cart.cartId && i.productId === productId && i.size === size
   );
@@ -69,7 +69,7 @@ router.post('/', authMiddleware, (req, res) => {
   if (existing) {
     existing.quantity += quantity; // CartItem.Update()
   } else {
-    // إنشاء CartItem Object جديد (يطابق UML attributes)
+    // Create a new CartItem Object (matches UML attributes)
     const cartItem = {
       cartItemId: nextId('cartItem'), // int cartItemId
       cartId:     cart.cartId,        // int cartId
@@ -84,8 +84,8 @@ router.post('/', authMiddleware, (req, res) => {
 });
 
 
-// ── PUT /api/cart/:cartItemId ───────────────────────────
-// يمثل: ShoppingCart.updateProduct(int product) من الـ UML
+// ── PUT /api/cart/:cartItemId ───────────────────────────────
+// Represents: ShoppingCart.updateProduct(int product) from the UML
 router.put('/:cartItemId', authMiddleware, (req, res) => {
   const item = cartItems.find(i => i.cartItemId === parseInt(req.params.cartItemId));
   if (!item) return res.status(404).json({ error: 'Cart item not found' });
@@ -102,8 +102,8 @@ router.put('/:cartItemId', authMiddleware, (req, res) => {
 });
 
 
-// ── DELETE /api/cart/:cartItemId ────────────────────────
-// يمثل: ShoppingCart.removeProduct(int productId) من الـ UML
+// ── DELETE /api/cart/:cartItemId ────────────────────────────
+// Represents: ShoppingCart.removeProduct(int productId) from the UML
 router.delete('/:cartItemId', authMiddleware, (req, res) => {
   const idx = cartItems.findIndex(i => i.cartItemId === parseInt(req.params.cartItemId));
   if (idx === -1) return res.status(404).json({ error: 'Not found' });
@@ -113,12 +113,12 @@ router.delete('/:cartItemId', authMiddleware, (req, res) => {
 });
 
 
-// ── DELETE /api/cart ────────────────────────────────────
-// يمثل: ShoppingCart.clearCart() من الـ UML
+// ── DELETE /api/cart ────────────────────────────────────────
+// Represents: ShoppingCart.clearCart() from the UML
 router.delete('/', authMiddleware, (req, res) => {
   const cart = carts.find(c => c.userId === req.user.userId);
   if (cart) {
-    // حذف كل CartItem objects تبع هذا الـ cart
+    // Remove all CartItem objects belonging to this cart
     const toRemove = cartItems
       .reduce((acc, item, i) => { if (item.cartId === cart.cartId) acc.push(i); return acc; }, []);
     toRemove.reverse().forEach(i => cartItems.splice(i, 1));
