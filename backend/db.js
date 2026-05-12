@@ -93,7 +93,7 @@ let products = [
   { productId:1,  name:'Oxford Button Shirt',  price:89,  category:'Shirts',      badge:'New',  image:'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&q=80' },
   { productId:2,  name:'Slim Fit Chinos',       price:120, category:'Pants',       badge:'Best', image:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80' },
   { productId:3,  name:'Wool Blazer',           price:240, category:'Jackets',     badge:'New',  image:'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&q=80' },
-  { productId:4,  name:'Classic Suit',          price:450, category:'Suits',       badge:'',     image:'https://images.unsplash.com/photo-1594938298603-c8148c4b4057?w=600&q=80' },
+  { productId:4,  name:'Classic Suit',          price:450, category:'Suits',       badge:'',     image:'https://unsplash.com/photos/man-in-a-navy-blue-suit-standing-by-a-door-se8TZFsl2ak' },
   { productId:5,  name:'Leather Belt',          price:55,  category:'Accessories', badge:'',     image:'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=600&q=80' },
   { productId:6,  name:'Derby Leather Shoes',   price:195, category:'Shoes',       badge:'Best', image:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80' },
   { productId:7,  name:'Linen Summer Shirt',    price:75,  category:'Shirts',      badge:'Sale', image:'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80' },
