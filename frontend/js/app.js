@@ -1,47 +1,16 @@
-// ============================================================
-//  app.js — Trendora Frontend Application Logic
-//
-//  الـ Objects المستخدمة هنا تطابق Classes الـ UML Diagram:
-//  - currentUser  → User object
-//  - cartData     → ShoppingCart object
-//  - detailItem   → Product object
-// ============================================================
-
-
-// ════════════════════════════════════════════════════════
-//  STATE — الـ Objects الرئيسية في التطبيق
-// ════════════════════════════════════════════════════════
-
-// User Object (من الـ UML: userId, name, email)
 let currentUser = JSON.parse(localStorage.getItem('tr_user') || 'null');
-
-// هل المستخدم الحالي Admin؟
-let isAdmin = JSON.parse(localStorage.getItem('tr_is_admin') || 'false');
-
-// ShoppingCart Object (من الـ UML: cartId, userId, items)
-let cartData = null;
-
-// Product Object المحدد لصفحة التفاصيل
-let detailItem = null;
-
-// المقاس المختار في صفحة التفاصيل
+let isAdmin     = JSON.parse(localStorage.getItem('tr_is_admin') || 'false');
+let cartData    = null;
+let detailItem  = null;
 let selectedSize = '';
-
-// وضع صفحة المصادقة: 'login' أو 'register'
-let authMode = 'login';
+let authMode    = 'login';
 
 
-// ════════════════════════════════════════════════════════
-//  NAVIGATION
-// ════════════════════════════════════════════════════════
 function goTo(page) {
-  // إخفاء كل الصفحات
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  // إظهار الصفحة المطلوبة
   document.getElementById('page-' + page).classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // تحميل البيانات حسب الصفحة
   if (page === 'cart')   renderCart();
   if (page === 'orders') loadOrders();
   if (page === 'admin' && isAdmin) loadAdminDashboard();
@@ -52,9 +21,6 @@ function toggleMobileMenu() {
 }
 
 
-// ════════════════════════════════════════════════════════
-//  TOAST NOTIFICATION
-// ════════════════════════════════════════════════════════
 let _toastTimer;
 function toast(msg) {
   const el = document.getElementById('toast');
@@ -65,9 +31,6 @@ function toast(msg) {
 }
 
 
-// ════════════════════════════════════════════════════════
-//  NAVBAR UI
-// ════════════════════════════════════════════════════════
 function refreshNavUI() {
   const loggedIn = !!currentUser;
 
@@ -86,15 +49,11 @@ function refreshNavUI() {
 }
 
 
-// ════════════════════════════════════════════════════════
-//  PRODUCTS — Product objects
-// ════════════════════════════════════════════════════════
 async function loadProducts(category = 'All') {
   const grid = document.getElementById('products-grid');
   grid.innerHTML = '<div class="grid-loader">Loading collection...</div>';
 
   try {
-    // جلب Array of Product objects من الـ Backend
     const products = await ProductAPI.getAll(category);
 
     if (!products.length) {
@@ -102,7 +61,6 @@ async function loadProducts(category = 'All') {
       return;
     }
 
-    // رسم كل Product object كـ card
     grid.innerHTML = products.map((product, i) => {
       const badgeClass = product.badge === 'Sale' ? 'sale'
                        : product.badge === 'Best' ? 'best' : '';
@@ -134,7 +92,6 @@ async function loadProducts(category = 'All') {
 }
 
 function filterCat(cat, btn) {
-  // تحديث الـ active button
   if (btn) {
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -143,27 +100,21 @@ function filterCat(cat, btn) {
 }
 
 
-// ════════════════════════════════════════════════════════
-//  PRODUCT DETAIL — Product object
-// ════════════════════════════════════════════════════════
 async function openProductDetail(productId) {
   try {
-    // جلب Product object محدد
     const product = await ProductAPI.getOne(productId);
-    detailItem   = product;  // حفظ Product object في الـ state
+    detailItem   = product;
     selectedSize = '';
 
-    // تحديث الـ UI بـ attributes من Product object
-    document.getElementById('det-img').src          = product.image;
-    document.getElementById('det-cat').textContent  = product.category;
-    document.getElementById('det-name').textContent = product.name;
+    document.getElementById('det-img').src           = product.image;
+    document.getElementById('det-cat').textContent   = product.category;
+    document.getElementById('det-name').textContent  = product.name;
     document.getElementById('det-price').textContent = `$${product.price}`;
 
-    const badgeEl        = document.getElementById('det-badge');
-    badgeEl.textContent  = product.badge || '';
-    badgeEl.className    = 'det-badge' + (product.badge === 'Sale' ? ' sale-b' : '');
+    const badgeEl       = document.getElementById('det-badge');
+    badgeEl.textContent = product.badge || '';
+    badgeEl.className   = 'det-badge' + (product.badge === 'Sale' ? ' sale-b' : '');
 
-    // رسم أزرار المقاسات
     document.getElementById('size-grid').innerHTML =
       ['XS','S','M','L','XL','XXL'].map(size =>
         `<button class="sz" onclick="pickSize('${size}', this)">${size}</button>`
@@ -182,11 +133,10 @@ function pickSize(size, btn) {
 }
 
 async function addDetailToCart() {
-  if (!selectedSize)  { toast('Please choose a size first'); return; }
-  if (!currentUser)   { toast('Please login first'); goTo('auth'); return; }
+  if (!selectedSize) { toast('Please choose a size first'); return; }
+  if (!currentUser)  { toast('Please login first'); goTo('auth'); return; }
 
   try {
-    // ShoppingCart.addProduct(productId) — إضافة Product object للسلة
     await CartAPI.add(detailItem.productId, selectedSize);
     toast(`${detailItem.name} added to bag!`);
     await refreshCartBadge();
@@ -205,18 +155,13 @@ async function quickAdd(productId) {
 }
 
 
-// ════════════════════════════════════════════════════════
-//  CART — ShoppingCart object + CartItem objects
-// ════════════════════════════════════════════════════════
 async function refreshCartBadge() {
   if (!currentUser) {
     document.getElementById('cart-count').textContent = '0';
     return;
   }
   try {
-    // جلب ShoppingCart object من الـ Backend
     cartData = await CartAPI.get();
-    // حساب عدد CartItem objects
     const count = cartData.items.reduce((s, item) => s + item.quantity, 0);
     document.getElementById('cart-count').textContent = count;
   } catch {}
@@ -237,7 +182,6 @@ async function renderCart() {
   }
 
   try {
-    // جلب ShoppingCart object مع CartItem objects
     cartData = await CartAPI.get();
 
     if (!cartData.items.length) {
@@ -245,7 +189,6 @@ async function renderCart() {
       return;
     }
 
-    // رسم كل CartItem object
     el.innerHTML = cartData.items.map(item => `
       <div class="cart-row">
         <img src="${item.product.image}" alt="${item.product.name}"/>
@@ -278,7 +221,6 @@ async function renderCart() {
 
 async function changeQty(cartItemId, newQty) {
   try {
-    // ShoppingCart.updateProduct()
     cartData = await CartAPI.update(cartItemId, newQty);
     renderCart();
     refreshCartBadge();
@@ -287,7 +229,6 @@ async function changeQty(cartItemId, newQty) {
 
 async function removeItem(cartItemId) {
   try {
-    // ShoppingCart.removeProduct()
     cartData = await CartAPI.remove(cartItemId);
     renderCart();
     refreshCartBadge();
@@ -297,7 +238,6 @@ async function removeItem(cartItemId) {
 
 async function clearCart() {
   try {
-    // ShoppingCart.clearCart()
     await CartAPI.clear();
     cartData = null;
     renderCart();
@@ -310,12 +250,10 @@ function goCheckout() {
   if (!cartData || !cartData.items.length) { toast('Your bag is empty'); return; }
   if (!currentUser) { toast('Please login first'); goTo('auth'); return; }
 
-  // تعبئة بيانات المستخدم تلقائياً من User object
   document.getElementById('co-name').value  = currentUser.name  || '';
   document.getElementById('co-email').value = currentUser.email || '';
   document.getElementById('co-err').textContent = '';
 
-  // رسم ملخص الطلب
   const sumEl = document.getElementById('co-summary');
   sumEl.innerHTML = `
     <h3 style="font-family:var(--serif);font-weight:300;margin-bottom:1rem">Order Summary</h3>
@@ -334,9 +272,6 @@ function goCheckout() {
 }
 
 
-// ════════════════════════════════════════════════════════
-//  ORDERS — Order + Payment objects
-// ════════════════════════════════════════════════════════
 async function submitOrder() {
   const address = document.getElementById('co-addr').value.trim();
   const payment = document.getElementById('co-pay').value;
@@ -346,10 +281,8 @@ async function submitOrder() {
   errEl.textContent = '';
 
   try {
-    // Order.Save() + Payment.processPayment()
     const result = await OrderAPI.place(payment, address);
 
-    // عرض تفاصيل Order object في صفحة النجاح
     document.getElementById('success-detail').innerHTML = `
       Order <strong>${result.order.orderRef}</strong><br>
       Total: <strong>$${result.order.totalAmount}</strong><br>
@@ -369,12 +302,10 @@ async function loadOrders() {
   el.innerHTML = '<div class="empty-note">Loading...</div>';
 
   try {
-    // جلب Array of Order objects
     const ordersList = await OrderAPI.getAll();
 
     if (!ordersList.length) { el.innerHTML = '<div class="empty-note">No orders yet.</div>'; return; }
 
-    // رسم كل Order object
     el.innerHTML = ordersList.map(order => `
       <div class="order-card">
         <div class="oc-head">
@@ -393,48 +324,41 @@ async function loadOrders() {
 }
 
 
-// ════════════════════════════════════════════════════════
-//  AUTH — User object
-// ════════════════════════════════════════════════════════
 function swapAuthMode(e) {
   e.preventDefault();
   authMode = authMode === 'login' ? 'register' : 'login';
   const isReg = authMode === 'register';
 
-  document.getElementById('auth-h1').textContent        = isReg ? 'Create Account' : 'Welcome Back';
-  document.getElementById('auth-sub').textContent       = isReg ? 'Join Trendora today.' : 'Login to your account.';
-  document.getElementById('reg-name-row').style.display = isReg ? '' : 'none';
-  document.getElementById('auth-submit-btn').textContent= isReg ? 'Register →' : 'Login →';
-  document.getElementById('toggle-txt').textContent     = isReg ? 'Already have an account?' : 'No account?';
-  document.getElementById('toggle-link').textContent    = isReg ? 'Login here' : 'Register here';
-  document.getElementById('auth-err').textContent       = '';
+  document.getElementById('auth-h1').textContent         = isReg ? 'Create Account' : 'Welcome Back';
+  document.getElementById('auth-sub').textContent        = isReg ? 'Join Trendora today.' : 'Login to your account.';
+  document.getElementById('reg-name-row').style.display  = isReg ? '' : 'none';
+  document.getElementById('auth-submit-btn').textContent = isReg ? 'Register →' : 'Login →';
+  document.getElementById('toggle-txt').textContent      = isReg ? 'Already have an account?' : 'No account?';
+  document.getElementById('toggle-link').textContent     = isReg ? 'Login here' : 'Register here';
+  document.getElementById('auth-err').textContent        = '';
 }
 
 async function submitAuth() {
-  const email  = document.getElementById('a-email').value.trim();
-  const pass   = document.getElementById('a-pass').value;
-  const errEl  = document.getElementById('auth-err');
+  const email = document.getElementById('a-email').value.trim();
+  const pass  = document.getElementById('a-pass').value;
+  const errEl = document.getElementById('auth-err');
 
   if (!email || !pass) { errEl.textContent = 'Please fill all fields'; return; }
   errEl.textContent = '';
 
   try {
     if (authMode === 'register') {
-      // User.Save() — إنشاء User object جديد
       const name = document.getElementById('a-name').value.trim();
       if (!name) { errEl.textContent = 'Please enter your name'; return; }
       const data = await AuthAPI.register(name, email, pass);
       saveSession(data.token, data.user, false);
       toast(`Welcome, ${data.user.name}! 🎉`);
-
     } else {
-      // User.login() — محاولة دخول كـ User ثم كـ Admin
       try {
         const data = await AuthAPI.login(email, pass);
         saveSession(data.token, data.user, false);
         toast(`Welcome back, ${data.user.name}!`);
       } catch {
-        // Admin.login()
         const data = await AuthAPI.adminLogin(email, pass);
         saveSession(data.token, { name: data.admin.name, email }, true);
         toast('Admin access granted!');
@@ -448,7 +372,6 @@ async function submitAuth() {
   } catch (err) { errEl.textContent = err.message; }
 }
 
-// حفظ User object في الـ localStorage
 function saveSession(token, user, admin) {
   localStorage.setItem('tr_token',    token);
   localStorage.setItem('tr_user',     JSON.stringify(user));
@@ -457,7 +380,6 @@ function saveSession(token, user, admin) {
   isAdmin     = admin;
 }
 
-// User.logout()
 function doLogout() {
   localStorage.removeItem('tr_token');
   localStorage.removeItem('tr_user');
@@ -472,12 +394,8 @@ function doLogout() {
 }
 
 
-// ════════════════════════════════════════════════════════
-//  ADMIN DASHBOARD — Admin object
-// ════════════════════════════════════════════════════════
 async function loadAdminDashboard() {
   try {
-    // جلب إحصائيات من Admin API
     const dash = await AdminAPI.dashboard();
 
     document.getElementById('admin-stats').innerHTML = `
@@ -487,7 +405,6 @@ async function loadAdminDashboard() {
       <div class="stat-box"><div class="stat-lbl">Revenue</div><div class="stat-val">$${dash.totalRevenue}</div></div>
     `;
 
-    // جلب Array of Order objects للأدمن
     const allOrders = await AdminAPI.getOrders();
 
     document.getElementById('admin-orders-tbl').innerHTML = `
@@ -524,18 +441,14 @@ async function loadAdminDashboard() {
 
 async function updateStatus(orderId, status) {
   try {
-    // Order.setStatues(String status)
     await AdminAPI.updateOrder(orderId, status);
     toast('Status updated: ' + status);
   } catch (err) { toast(err.message); }
 }
 
 
-// ════════════════════════════════════════════════════════
-//  INIT — تشغيل عند فتح الصفحة
-// ════════════════════════════════════════════════════════
 (function init() {
-  refreshNavUI();      // تحديث الـ navbar بناءً على User object
-  loadProducts();      // تحميل Product objects
-  refreshCartBadge();  // تحديث عدد CartItem objects
+  refreshNavUI();
+  loadProducts();
+  refreshCartBadge();
 })();
