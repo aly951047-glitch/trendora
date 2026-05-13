@@ -58,7 +58,7 @@ let products = [
   { productId:7,  name:'Linen Summer Shirt',    price:75,  category:'Shirts',      badge:'Sale', image:'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80' },
   { productId:8,  name:'Trench Coat',           price:310, category:'Jackets',     badge:'New',  image:'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80' },
   { productId:9,  name:'Casual Polo Shirt',     price:65,  category:'Shirts',      badge:'New',  image:'https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=600&q=80' },
-  { productId:10, name:'Denim Jacket',          price:185, category:'Jackets',     badge:'',     image:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80' },
+  { productId:10, name:'Denim Jacket',          price:185, category:'Jackets',     badge:'',     image:'https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=600&q=80' },
   { productId:11, name:'Classic White Shirt',   price:70,  category:'Shirts',      badge:'Best', image:'https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&q=80' },
   { productId:12, name:'Slim Fit Suit',         price:380, category:'Suits',       badge:'New',  image:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&q=80' },
   { productId:13, name:'Leather Wallet',        price:35,  category:'Accessories', badge:'',     image:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80' },
