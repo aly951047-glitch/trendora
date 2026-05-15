@@ -1,38 +1,46 @@
 const express = require('express');
-const { users, orders, products, payments, orderItems } = require('../db');
+const { query, run }      = require('../db');
 const { adminMiddleware } = require('../middleware/auth');
 
 const router = express.Router();
 
 router.get('/dashboard', adminMiddleware, (req, res) => {
-  const totalRevenue = payments.reduce((s, p) => s + p.amount, 0);
+  const [{ total: totalRevenue }] = query('SELECT COALESCE(SUM(amount),0) as total FROM payments');
+  const [{ c: totalUsers }]    = query('SELECT COUNT(*) as c FROM users');
+  const [{ c: totalProducts }] = query('SELECT COUNT(*) as c FROM products');
+  const [{ c: totalOrders }]   = query('SELECT COUNT(*) as c FROM orders');
+  const recentOrders = query('SELECT * FROM orders ORDER BY orderId DESC LIMIT 5');
+
   res.json({
-    totalUsers:    users.length,
-    totalProducts: products.length,
-    totalOrders:   orders.length,
-    totalRevenue:  totalRevenue.toFixed(2),
-    recentOrders:  orders.slice(-5).reverse()
+    totalUsers,
+    totalProducts,
+    totalOrders,
+    totalRevenue: parseFloat(totalRevenue).toFixed(2),
+    recentOrders
   });
 });
 
 router.get('/users', adminMiddleware, (req, res) => {
-  res.json(users.map(u => ({ userId: u.userId, name: u.name, email: u.email })));
+  res.json(query('SELECT userId, name, email FROM users'));
 });
 
 router.get('/orders', adminMiddleware, (req, res) => {
-  const result = orders.map(o => ({
-    ...o,
-    userName:  users.find(u => u.userId === o.userId)?.name || '—',
-    itemCount: orderItems.filter(i => i.orderId === o.orderId).length
-  }));
-  res.json(result.reverse());
+  const orders = query('SELECT * FROM orders ORDER BY orderId DESC');
+  const result = orders.map(o => {
+    const [user] = query('SELECT name FROM users WHERE userId = ?', [o.userId]);
+    const [{ c: itemCount }] = query('SELECT COUNT(*) as c FROM orderItems WHERE orderId = ?', [o.orderId]);
+    return { ...o, userName: user?.name || '—', itemCount };
+  });
+  res.json(result);
 });
 
 router.put('/orders/:id', adminMiddleware, (req, res) => {
-  const order = orders.find(o => o.orderId === parseInt(req.params.id));
+  const id = parseInt(req.params.id);
+  const [order] = query('SELECT * FROM orders WHERE orderId = ?', [id]);
   if (!order) return res.status(404).json({ error: 'Not found' });
-  order.status = req.body.status;
-  res.json(order);
+  run('UPDATE orders SET status = ? WHERE orderId = ?', [req.body.status, id]);
+  const [updated] = query('SELECT * FROM orders WHERE orderId = ?', [id]);
+  res.json(updated);
 });
 
 module.exports = router;
