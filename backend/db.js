@@ -107,7 +107,6 @@ const DatabaseConnection = {
       ['Oxford Button Shirt',89,'Shirts','New','https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&q=80'],
       ['Slim Fit Chinos',120,'Pants','Best','https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80'],
       ['Wool Blazer',240,'Jackets','New','https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&q=80'],
-      ['Classic Suit',450,'Suits','','https://images.unsplash.com/photo-1594938298603-c8148c4b4457?w=600&q=80'],
       ['Leather Belt',55,'Accessories','','https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=600&q=80'],
       ['Derby Leather Shoes',195,'Shoes','Best','https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80'],
       ['Linen Summer Shirt',75,'Shirts','Sale','https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80'],
