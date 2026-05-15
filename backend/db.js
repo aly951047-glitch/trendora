@@ -106,18 +106,17 @@ const DatabaseConnection = {
     const P = [
       ['Oxford Button Shirt',89,'Shirts','New','https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&q=80'],
       ['Slim Fit Chinos',120,'Pants','Best','https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80'],
-      ['Wool Blazer',240,'Jackets','New','https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&q=80'],
+      ['Wool Blazer',240,'Suits','New','https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&q=80'],
       ['Leather Belt',55,'Accessories','','https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=600&q=80'],
-      ['Derby Leather Shoes',195,'Shoes','Best','https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80'],
+      ['Derby Leather Shoes',195,'Shoes','Best','https://unsplash.com/photos/a-pair-of-black-shoes-2nST4hbvTkc'],
       ['Linen Summer Shirt',75,'Shirts','Sale','https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80'],
       ['Trench Coat',310,'Jackets','New','https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80'],
       ['Casual Polo Shirt',65,'Shirts','New','https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=600&q=80'],
       ['Denim Jacket',185,'Jackets','','https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=600&q=80'],
       ['Classic White Shirt',70,'Shirts','Best','https://images.unsplash.com/photo-1602810316693-3667c854239a?w=600&q=80'],
       ['Slim Fit Suit',380,'Suits','New','https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&q=80'],
-      ['Leather Wallet',35,'Accessories','','https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80'],
       ['Formal Oxford Shoes',210,'Shoes','Best','https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=600&q=80'],
-      ['Striped Dress Shirt',80,'Shirts','','https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=600&q=80'],
+      ['Striped Dress Shirt',80,'Suits','','https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=600&q=80'],
       ['Casual Sneakers',120,'Shoes','New','https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80'],
     ];
     P.forEach(([name,price,cat,badge,img]) => {
