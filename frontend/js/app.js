@@ -78,8 +78,6 @@ async function loadProducts(category = 'All') {
             <div class="prod-cat">${product.category}</div>
             <div class="prod-footer">
               <span class="prod-price">$${product.price}</span>
-              <button class="quick-btn"
-                onclick="event.stopPropagation(); quickAdd(${product.productId})">+</button>
             </div>
           </div>
         </div>
@@ -141,16 +139,6 @@ async function addDetailToCart() {
     toast(`${detailItem.name} added to bag!`);
     await refreshCartBadge();
     goTo('home');
-  } catch (err) { toast(err.message); }
-}
-
-async function quickAdd(productId) {
-  if (!currentUser) { toast('Please login first'); goTo('auth'); return; }
-  try {
-    await CartAPI.add(productId, 'M');
-    toast('Added to bag!');
-    await refreshCartBadge();
-    popBadge();
   } catch (err) { toast(err.message); }
 }
 
